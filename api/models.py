@@ -6,12 +6,16 @@ from .enums import USER_TYPES
 
 
 class User(AbstractUser):
+    #TODO: change id to uuid afterwards
+    #id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     userType = models.CharField(
         max_length=10,
         choices=USER_TYPES,
         default="ADMIN"
     )
+
+    phone_number = models.CharField(max_length=30, null=True)
 
 
 
