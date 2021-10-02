@@ -80,6 +80,10 @@ REST_FRAMEWORK = {
     ],
 }
 
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'api.serializers.CustomRegisterSerializer',
+}
+
 ###############################################################
 
 MIDDLEWARE = [
