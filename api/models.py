@@ -1,21 +1,21 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.utils.translation import gettext_lazy as _
+from .enums import USER_TYPES
 
 # Create your models here.
 
 
 class User(AbstractUser):
-
-    class UserType(models.TextChoices):
-        ADMIN = "ADMIN", _("Admin")
-        REGULAR = "REGULAR", _("Regular User")
+    #TODO: change id to uuid afterwards
+    #id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     userType = models.CharField(
         max_length=10,
-        choices=UserType.choices,
-        default=UserType.ADMIN
+        choices=USER_TYPES,
+        default="ADMIN"
     )
+
+    phone_number = models.CharField(max_length=30, null=True)
 
 
 
