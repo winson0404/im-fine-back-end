@@ -6,3 +6,17 @@ USER_TYPES = (
     ('REGULAR', 'Regular'),
 )
 
+HISTORY_TYPES = (
+    ('POST', 'Post'),
+    ('MESSAGE', 'Message'),
+)
+
+SOCIAL_PLATFORMS = (
+    ('FACEBOOK', 'Facebook'),
+    ('TWITTER', 'Twitter')
+)
+
+MESSAGE_TYPES = (
+    ('EMAIL', 'Email'),
+    ('SMS', 'Sms')
+)
