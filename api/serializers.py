@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_auth.registration.serializers import RegisterSerializer
-from .models import User, Admin, Regular, AdminLog
+from .models import User, Admin, Regular, AdminLog, History, Post, Message
 from .enums import USER_TYPES
 
 # custom register credentials
@@ -63,6 +63,28 @@ class AdminLogSerializer(serializers.ModelSerializer):
         fields = ('id', 'user_id', 'log_detail', 'created_at')
         extra_kwargs = {
             'created_at': {'read_only': True},
-            'updated_at': {'read_only': True}
         }
 
+
+class HistorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = History
+        fields = ("id", "user_id", "histType", "created_at", "content")
+        extra_kwargs = {
+            'created_at': {'read_only': True}
+        }
+
+
+class PostSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Post
+        fields = ("id", "platform")
+
+
+class MessageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Message
+        fields = ("id", "receiver", "messageType")
