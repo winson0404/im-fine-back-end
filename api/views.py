@@ -3,13 +3,29 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
-from .models import User
-from .serializers import UserSerializer
+from .models import User, Admin, Regular
+from .serializers import UserSerializer, AdminSerializer,  RegularSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from rest_auth.registration.views import RegisterView
 
 
 # Create your views here.
+
+class CustomRegisterView(RegisterView):
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        user = User.objects.get(id=response.data['user_id'])
+        if user.userType == "ADMIN":
+            user_type = "Admin"
+            Admin.objects.create(id=user)
+        else:
+            user_type = "Regular"
+            Regular.objects.create(id=user)
+        print("response data:", response.data)
+        custom_data = {"message": user_type + " user successfully created."}
+        response.data.update(custom_data)
+        return response
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -33,3 +49,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         return Response("You are not allowed to do this", status=status.HTTP_401_UNAUTHORIZED)
+
+
+class AdminViewSet(viewsets.ModelViewSet):
+    queryset = Admin.objects.all()
+    serializer_class = AdminSerializer
+
+
+class RegularViewSet(viewsets.ModelViewSet):
+    queryset = Regular.objects.all()
+    serializer_class = RegularSerializer
