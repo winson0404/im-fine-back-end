@@ -3,10 +3,12 @@ from rest_framework import routers
 from django.conf.urls import include, url
 # from rest_framework.decorators import schema
 
-from .views import UserViewSet
+from .views import UserViewSet, AdminViewSet, RegularViewSet, CustomRegisterView
 
 router = routers.DefaultRouter()
 router.register('users', UserViewSet)
+router.register('admins', AdminViewSet)
+router.register('regulars', RegularViewSet)
 
 # disable some endpoints
 # (vf, app_name, namespace) = include('rest_auth.urls')
@@ -20,5 +22,6 @@ router.register('users', UserViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('auth/', include('rest_auth.urls')),
-    path('auth/register/', include('rest_auth.registration.urls')),
+    url(r'^account/', include('allauth.urls')),
+    path('auth/register/', CustomRegisterView.as_view(), name='custom_registration'),
 ]

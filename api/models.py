@@ -18,4 +18,13 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=30, null=True)
 
 
+class Admin(models.Model):
+    id = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE, related_name="admin_user")
+    details = models.TextField(blank=True, default="")
+    address = models.TextField( blank=True, default="")
 
+
+class Regular(models.Model):
+    id = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE, to_field="id")
+    default_msg = models.TextField(blank=True, default="I am fine")
+    meet_link = models.URLField(null=True)
