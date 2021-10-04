@@ -3,12 +3,13 @@ from rest_framework import routers
 from django.conf.urls import include, url
 # from rest_framework.decorators import schema
 
-from .views import UserViewSet, AdminViewSet, RegularViewSet, CustomRegisterView
+from .views import UserViewSet, AdminViewSet, RegularViewSet, CustomRegisterView, AdminLogViewSet
 
 router = routers.DefaultRouter()
 router.register('users', UserViewSet)
 router.register('admins', AdminViewSet)
 router.register('regulars', RegularViewSet)
+router.register('admin_logs', AdminLogViewSet)
 
 # disable some endpoints
 # (vf, app_name, namespace) = include('rest_auth.urls')

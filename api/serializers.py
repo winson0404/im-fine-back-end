@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_auth.registration.serializers import RegisterSerializer
-from .models import User, Admin, Regular
+from .models import User, Admin, Regular, AdminLog
 from .enums import USER_TYPES
 
 # custom register credentials
@@ -33,8 +33,13 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "username", "email", "password", "userType")
-        extra_kwargs = {'password': {'write_only': True, 'required': True}}
+        # fields = '__all__'
+        fields = ("id", "username", "email", "password", "userType", "created_at", "updated_at")
+        extra_kwargs = {
+            'password': {'write_only': True, 'required': True},
+            'created_at': {'read_only': True},
+            'updated_at': {'read_only': True}
+        }
 
 
 class AdminSerializer(serializers.ModelSerializer):
@@ -49,3 +54,15 @@ class RegularSerializer(serializers.ModelSerializer):
     class Meta:
         model = Regular
         fields = ("id", "default_msg", "meet_link")
+
+
+class AdminLogSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AdminLog
+        fields = ('id', 'user_id', 'log_detail', 'created_at')
+        extra_kwargs = {
+            'created_at': {'read_only': True},
+            'updated_at': {'read_only': True}
+        }
+

@@ -3,8 +3,8 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
-from .models import User, Admin, Regular
-from .serializers import UserSerializer, AdminSerializer,  RegularSerializer
+from .models import User, Admin, Regular, AdminLog
+from .serializers import UserSerializer, AdminSerializer, RegularSerializer, AdminLogSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_auth.registration.views import RegisterView
@@ -59,3 +59,7 @@ class AdminViewSet(viewsets.ModelViewSet):
 class RegularViewSet(viewsets.ModelViewSet):
     queryset = Regular.objects.all()
     serializer_class = RegularSerializer
+
+class AdminLogViewSet(viewsets.ModelViewSet):
+    queryset = AdminLog.objects.all()
+    serializer_class = AdminLogSerializer
