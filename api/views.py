@@ -22,7 +22,6 @@ class CustomRegisterView(RegisterView):
         else:
             user_type = "Regular"
             Regular.objects.create(id=user)
-        print("response data:", response.data)
         custom_data = {"message": user_type + " user successfully created."}
         response.data.update(custom_data)
         return response
