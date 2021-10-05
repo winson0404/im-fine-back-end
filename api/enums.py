@@ -9,6 +9,7 @@ USER_TYPES = (
 HISTORY_TYPES = (
     ('POST', 'Post'),
     ('MESSAGE', 'Message'),
+    ('BOTH', 'both'),
 )
 
 SOCIAL_PLATFORMS = (

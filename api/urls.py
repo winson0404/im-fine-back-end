@@ -3,7 +3,8 @@ from rest_framework import routers
 from django.conf.urls import include, url
 # from rest_framework.decorators import schema
 
-from .views import UserViewSet, AdminViewSet, RegularViewSet, CustomRegisterView, AdminLogViewSet, HistoryViewSet, PostViewSet, MessageViewSet
+from .views import UserViewSet, AdminViewSet, RegularViewSet, CustomRegisterView, AdminLogViewSet, HistoryViewSet, \
+    PostViewSet, MessageViewSet
 
 router = routers.DefaultRouter()
 router.register('users', UserViewSet)
