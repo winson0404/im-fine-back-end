@@ -33,11 +33,12 @@ class Regular(models.Model):
     meet_link = models.URLField(null=True)
 
 
-# class FriendList(models.Model):
-#     user_id = models.ForeignKey(Regular, on_delete=models.CASCADE, related_name="friend_list")
-#     friend_id = models.ForeignKey(Regular, on_delete=models.SET_NULL, null=True)
-#     friend_email = models.EmailField(default="", blank=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
+class FriendList(models.Model):
+    user_id = models.ForeignKey(Regular, on_delete=models.CASCADE, related_name="friend_list")
+    friend_id = models.ForeignKey(Regular, on_delete=models.SET_NULL, null=True)
+    friend_email = models.EmailField(default="", blank=True, null=True)
+    friend_username = models.CharField(max_length=50, default="", blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class AdminLog(models.Model):

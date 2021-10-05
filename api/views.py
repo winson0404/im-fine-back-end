@@ -2,9 +2,9 @@ from rest_framework import viewsets, status, views
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import User, Admin, Regular, AdminLog, Message, Post, History
+from .models import User, Admin, Regular, AdminLog, Message, Post, History, FriendList
 from .serializers import UserSerializer, AdminSerializer, RegularSerializer, AdminLogSerializer, HistorySerializer, \
-    PostSerializer, MessageSerializer
+    PostSerializer, MessageSerializer, FriendListSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_auth.registration.views import RegisterView
@@ -60,6 +60,30 @@ class RegularViewSet(viewsets.ModelViewSet):
     serializer_class = RegularSerializer
 
 
+class FriendListViewSet(viewsets.ModelViewSet):
+    queryset = FriendList.objects.all()
+    serializer_class = FriendListSerializer
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        # request.data._mutable = True
+        request.data.update({"user_id": user.id})
+        print(request.data)
+        if request.data["friend_id"] is not None or request.data["friend_id"] == "":
+            friend = User.objects.get(id=request.data["friend_id"])
+            request.data.update({"friend_email": friend.email})
+            request.data.update({"friend_username": friend.username})
+        else:
+            # check if both friend_id and email_id is empty
+            if request.data["friend_email"] is None or request.data["friend_email"] == "":
+                response = {'message': "must include either fried_email or friend_id"}
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        # request.data._mutable = False
+
+        response = super().create(request, *args, **kwargs)
+        return response
+
+
 class AdminLogViewSet(viewsets.ModelViewSet):
     queryset = AdminLog.objects.all()
     serializer_class = AdminLogSerializer
@@ -76,7 +100,7 @@ class AdminLogViewSet(viewsets.ModelViewSet):
 
 
 class HistoryViewSet(viewsets.ModelViewSet):
-    queryset = History.objects.all()
+    queryset = History.objects.all().order_by('-created_at')
     serializer_class = HistorySerializer
     authentication_classes = (TokenAuthentication,)
 
@@ -107,6 +131,7 @@ class HistoryViewSet(viewsets.ModelViewSet):
         response = {'message': "Please use the provided api/history/make_history [POST] method"}
         return Response(response, status=status.HTTP_403_FORBIDDEN)
 
+
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -117,4 +142,3 @@ class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     http_method_names = ['get', 'post', 'delete']
-

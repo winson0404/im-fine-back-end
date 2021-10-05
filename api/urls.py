@@ -4,7 +4,7 @@ from django.conf.urls import include, url
 # from rest_framework.decorators import schema
 
 from .views import UserViewSet, AdminViewSet, RegularViewSet, CustomRegisterView, AdminLogViewSet, HistoryViewSet, \
-    PostViewSet, MessageViewSet
+    PostViewSet, MessageViewSet, FriendListViewSet
 
 router = routers.DefaultRouter()
 router.register('users', UserViewSet)
@@ -14,6 +14,7 @@ router.register('admin_logs', AdminLogViewSet)
 router.register('history', HistoryViewSet)
 router.register('post', PostViewSet)
 router.register('message', MessageViewSet)
+router.register('friend_connections', FriendListViewSet)
 
 # disable some endpoints
 # (vf, app_name, namespace) = include('rest_auth.urls')

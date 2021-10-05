@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import User, Admin, Regular, AdminLog, Message, Post, History
+from .models import User, Admin, Regular, AdminLog, Message, Post, History, FriendList
 
 
 class CustomUserAdmin(UserAdmin):
@@ -61,3 +61,4 @@ admin.site.register(AdminLog)
 admin.site.register(History)
 admin.site.register(Post)
 admin.site.register(Message)
+admin.site.register(FriendList)
