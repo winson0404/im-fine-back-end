@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_auth.registration.serializers import RegisterSerializer
-from .models import User, Admin, Regular, AdminLog, History, Post, Message
+from .models import User, Admin, Regular, AdminLog, History, Post, Message, FriendList
 from .enums import USER_TYPES, MESSAGE_TYPES, SOCIAL_PLATFORMS
 
 
@@ -32,25 +32,29 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # fields = '__all__'
-        fields = ("id", "username", "email", "password", "userType", "friends", "created_at", "updated_at")
+        fields = ("id", "username", "email", "password", "userType", "created_at", "updated_at")
         extra_kwargs = {
             'password': {'write_only': True, 'required': True},
             'created_at': {'read_only': True},
             'updated_at': {'read_only': True},
-            'friends': {'required': False},
         }
 
 
-class AdminSerializer(serializers.ModelSerializer):
+class FriendListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Admin
-        fields = ("id", "address", "details")
+        model = FriendList
+        fields = ('user_id', 'friend_id', 'friend_email', 'friend_username')
+        extra_kwargs = {
+            'user_id': {'write_only': True, 'required': True},
+        }
 
 
 class RegularSerializer(serializers.ModelSerializer):
+    friend_list = FriendListSerializer(many=True)
+
     class Meta:
         model = Regular
-        fields = ("id", "default_msg", "meet_link")
+        fields = ("id", "default_msg", "meet_link", "friend_list")
 
 
 class AdminLogSerializer(serializers.ModelSerializer):
@@ -60,6 +64,17 @@ class AdminLogSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'created_at': {'read_only': True},
         }
+
+
+
+
+
+
+
+class AdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Admin
+        fields = ("id", "address", "details")
 
 
 class HistorySerializer(serializers.ModelSerializer):
