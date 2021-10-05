@@ -6,7 +6,6 @@ import uuid
 
 
 class User(AbstractUser):
-    #TODO: change id to uuid afterwards
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     userType = models.CharField(
@@ -16,6 +15,7 @@ class User(AbstractUser):
     )
 
     phone_number = models.CharField(max_length=30, null=True)
+    friends = models.ManyToManyField('self')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -31,6 +31,13 @@ class Regular(models.Model):
     id = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE, to_field="id")
     default_msg = models.TextField(blank=True, default="I am fine")
     meet_link = models.URLField(null=True)
+
+
+# class FriendList(models.Model):
+#     user_id = models.ForeignKey(Regular, on_delete=models.CASCADE, related_name="friend_list")
+#     friend_id = models.ForeignKey(Regular, on_delete=models.SET_NULL, null=True)
+#     friend_email = models.EmailField(default="", blank=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
 
 
 class AdminLog(models.Model):
@@ -69,3 +76,24 @@ class Message(models.Model):
         choices=MESSAGE_TYPES,
         null=False
     )
+
+
+# class TempHistory(models.Model):
+#     content = models.TextField(null=False)
+#     histType = models.CharField(
+#         max_length=10,
+#         choices=TEMP_HISTORY_TYPES,
+#         null=False
+#     )
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     platform = models.CharField(
+#         max_length=10,
+#         choices=SOCIAL_PLATFORMS,
+#         null=False
+#     )
+#     receiver = models.CharField(max_length=50, null=False)
+#     messageType = models.CharField(
+#         max_length=10,
+#         choices=MESSAGE_TYPES,
+#         null=False
+#     )

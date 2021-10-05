@@ -1,9 +1,10 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, views
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import User, Admin, Regular, AdminLog, Message, Post, History
-from .serializers import UserSerializer, AdminSerializer, RegularSerializer, AdminLogSerializer, HistorySerializer, PostSerializer, MessageSerializer
+from .serializers import UserSerializer, AdminSerializer, RegularSerializer, AdminLogSerializer, HistorySerializer, \
+    PostSerializer, MessageSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_auth.registration.views import RegisterView
@@ -37,7 +38,7 @@ class UserViewSet(viewsets.ModelViewSet):
             user = User.objects.get(id=pk)
             username = user.username
             user.delete()
-            response = {'message': username+" has been deleted"}
+            response = {'message': username + " has been deleted"}
             return Response(response, status=status.HTTP_200_OK)
 
         except Exception as e:
@@ -45,7 +46,8 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
-        return Response("You are not allowed to do this", status=status.HTTP_401_UNAUTHORIZED)
+        response = {'message': "Please use the provided api/user/delete_user [DELETE] method"}
+        return Response(response, status=status.HTTP_403_FORBIDDEN)
 
 
 class AdminViewSet(viewsets.ModelViewSet):
@@ -61,7 +63,7 @@ class RegularViewSet(viewsets.ModelViewSet):
 class AdminLogViewSet(viewsets.ModelViewSet):
     queryset = AdminLog.objects.all()
     serializer_class = AdminLogSerializer
-    authentication_classes = (TokenAuthentication, )
+    authentication_classes = (TokenAuthentication,)
     http_method_names = ['get', 'post']
 
     def create(self, request, *args, **kwargs):
@@ -76,29 +78,34 @@ class AdminLogViewSet(viewsets.ModelViewSet):
 class HistoryViewSet(viewsets.ModelViewSet):
     queryset = History.objects.all()
     serializer_class = HistorySerializer
-    authentication_classes = (TokenAuthentication, )
-
-    def create(self, request, *args, **kwargs):
-        user = request.user
-        request.data._mutable = True
-        request.data.update({"user_id": user.id})
-        request.data._mutable = False
-        response = super().create(request, *args, **kwargs)
-
-        history_type = response.data["histType"]
-        history_id = response.data["id"]
-        history = History.objects.get(id=history_id)
-        #TODO: discuss to improve this
-        if history_type == "POST":
-            Post.objects.create(id=history)
-        else:
-            Message.objects.create(id=history)
-        print("response data:", response.data)
-
-        return response
+    authentication_classes = (TokenAuthentication,)
 
     http_method_names = ['get', 'post', 'delete']
 
+    @action(detail=False, methods=['POST'])
+    def make_history(self, request):
+        user = request.user
+        history_type = request.data["histType"]
+        if history_type == "MESSAGE":
+            history = History.objects.create(user_id=user, histType="MESSAGE", content=request.data["content"])
+            Message.objects.create(id=history, messageType=request.data["messageType"],
+                                   receiver=request.data["receiver"])
+        elif history_type == "Post":
+            history = History.objects.create(user_id=user, histType="POST", content=request.data["content"])
+            Post.objects.create(id=history, platform=request.data["platform"])
+        else:
+            history1 = History.objects.create(user_id=user, histType="MESSAGE", content=request.data["content"])
+            Message.objects.create(id=history1, mecssageType=request.data["messageType"],
+                                   receiver=request.data["receiver"])
+            history2 = History.objects.create(user_id=user, histType="POST", content=request.data["content"])
+            Post.objects.create(id=history2, platform=request.data["platform"])
+
+        response = {'message': 'history successfully made'}
+        return Response(response, status=status.HTTP_201_CREATED)
+
+    def create(self, request, *args, **kwargs):
+        response = {'message': "Please use the provided api/history/make_history [POST] method"}
+        return Response(response, status=status.HTTP_403_FORBIDDEN)
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
@@ -110,3 +117,4 @@ class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     http_method_names = ['get', 'post', 'delete']
+
