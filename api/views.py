@@ -2,9 +2,9 @@ from rest_framework import viewsets, status, views
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import User, Admin, Regular, AdminLog, Message, Post, History, FriendList
+from .models import User, Admin, Regular, AdminLog, Message, Post, History, FriendList, Announcement
 from .serializers import UserSerializer, AdminSerializer, RegularSerializer, AdminLogSerializer, HistorySerializer, \
-    PostSerializer, MessageSerializer, FriendListSerializer
+    PostSerializer, MessageSerializer, FriendListSerializer, AnnouncementSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_auth.registration.views import RegisterView
@@ -30,7 +30,7 @@ class CustomRegisterView(RegisterView):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    http_method_names = http_method_names = ['get', 'delete', 'put']
+    http_method_names = ['get', 'delete', 'put']
 
     @action(detail=True, methods=['DELETE'])
     def delete_user(self, request, pk=None):
@@ -46,7 +46,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
-        response = {'message': "Please use the provided api/user/delete_user [DELETE] method"}
+        response = {'message': "Please use the provided api/users/delete_user [DELETE] method"}
         return Response(response, status=status.HTTP_403_FORBIDDEN)
 
 
@@ -128,7 +128,7 @@ class HistoryViewSet(viewsets.ModelViewSet):
         return Response(response, status=status.HTTP_201_CREATED)
 
     def create(self, request, *args, **kwargs):
-        response = {'message': "Please use the provided api/history/make_history [POST] method"}
+        response = {'message': "Please use the provided api/histories/make_history [POST] method"}
         return Response(response, status=status.HTTP_403_FORBIDDEN)
 
 
@@ -142,3 +142,22 @@ class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     http_method_names = ['get', 'post', 'delete']
+
+
+class AnnouncementViewSet(viewsets.ModelViewSet):
+    queryset = Announcement.objects.all()
+    serializer_class = AnnouncementSerializer
+    authentication_classes = (TokenAuthentication,)
+
+    def create(self, request, *args, **kwargs):
+        response = {'message': "Please use the provided api/announcements/create_announcement [POST] method"}
+        return Response(response, status=status.HTTP_403_FORBIDDEN)
+
+    @action(detail=False, methods=['POST'])
+    def create_announcement(self, request):
+        user = request.user
+        admin = Admin.objects.get(id=user)
+        Announcement.objects.create(sender_id=admin, content=request.data["content"])
+
+        response = {'message': 'announcement successfully created'}
+        return Response(response, status=status.HTTP_200_OK)

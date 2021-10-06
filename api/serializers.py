@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_auth.registration.serializers import RegisterSerializer
-from .models import User, Admin, Regular, AdminLog, History, Post, Message, FriendList
+from .models import User, Admin, Regular, AdminLog, History, Post, Message, FriendList, Announcement
 from .enums import USER_TYPES, MESSAGE_TYPES, SOCIAL_PLATFORMS
 
 
@@ -40,6 +40,12 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
 
+class SimpleUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("username", "email")
+
+
 class FriendListSerializer(serializers.ModelSerializer):
     class Meta:
         model = FriendList
@@ -66,15 +72,12 @@ class AdminLogSerializer(serializers.ModelSerializer):
         }
 
 
-
-
-
-
-
 class AdminSerializer(serializers.ModelSerializer):
+    user_detail = SimpleUserSerializer(source='id', many=False)
+
     class Meta:
         model = Admin
-        fields = ("id", "address", "details")
+        fields = ("id", "user_detail", "address", "details")
 
 
 class HistorySerializer(serializers.ModelSerializer):
@@ -96,3 +99,17 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ("id", "receiver", "messageType")
+
+
+class AnnouncementSenderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserSerializer
+        fields = ('id', 'username', 'email')
+
+
+class AnnouncementSerializer(serializers.ModelSerializer):
+    sender = AdminSerializer(source='sender_id', many=False, read_only=True)
+
+    class Meta:
+        model = Announcement
+        fields = ("id", "sender", "content", "created_at")
