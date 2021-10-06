@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_auth.registration.serializers import RegisterSerializer
-from .models import User, Admin, Regular, AdminLog, History, Post, Message, FriendList, Announcement
+from .models import User, Admin, Regular, AdminLog, History, Post, Message, FriendList, Announcement, Notification
 from .enums import USER_TYPES, MESSAGE_TYPES, SOCIAL_PLATFORMS
 
 
@@ -57,10 +57,19 @@ class FriendListSerializer(serializers.ModelSerializer):
 
 class RegularSerializer(serializers.ModelSerializer):
     friend_list = FriendListSerializer(many=True)
+    user_detail = SimpleUserSerializer(source='id', many=False)
 
     class Meta:
         model = Regular
-        fields = ("id", "default_msg", "meet_link", "friend_list")
+        fields = ("id", "user_detail", "default_msg", "meet_link", "friend_list")
+
+
+class AdminSerializer(serializers.ModelSerializer):
+    user_detail = SimpleUserSerializer(source='id', many=False)
+
+    class Meta:
+        model = Admin
+        fields = ("id", "user_detail", "address", "details")
 
 
 class AdminLogSerializer(serializers.ModelSerializer):
@@ -70,14 +79,6 @@ class AdminLogSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'created_at': {'read_only': True},
         }
-
-
-class AdminSerializer(serializers.ModelSerializer):
-    user_detail = SimpleUserSerializer(source='id', many=False)
-
-    class Meta:
-        model = Admin
-        fields = ("id", "user_detail", "address", "details")
 
 
 class HistorySerializer(serializers.ModelSerializer):
@@ -101,15 +102,25 @@ class MessageSerializer(serializers.ModelSerializer):
         fields = ("id", "receiver", "messageType")
 
 
-class AnnouncementSenderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserSerializer
-        fields = ('id', 'username', 'email')
-
-
 class AnnouncementSerializer(serializers.ModelSerializer):
     sender = AdminSerializer(source='sender_id', many=False, read_only=True)
 
     class Meta:
         model = Announcement
         fields = ("id", "sender", "content", "created_at")
+
+
+class NotificationSenderSerializer(serializers.ModelSerializer):
+    user_detail = SimpleUserSerializer(source='id', many=False)
+
+    class Meta:
+        model = Regular
+        fields = ("id", "user_detail")
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    sender = NotificationSenderSerializer(source='sender_id', many=False, read_only=True)
+
+    class Meta:
+        model = Notification
+        fields = ("receiver_id", "sender", "content", "created_at")

@@ -6,7 +6,7 @@ import uuid
 
 
 class User(AbstractUser):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     userType = models.CharField(
         max_length=10,
@@ -15,7 +15,6 @@ class User(AbstractUser):
     )
 
     phone_number = models.CharField(max_length=30, null=True)
-    friends = models.ManyToManyField('self')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -81,5 +80,12 @@ class Message(models.Model):
 
 class Announcement(models.Model):
     sender_id = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True, default=None)
+    content = models.TextField(null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Notification(models.Model):
+    sender_id = models.ForeignKey(Regular, on_delete=models.SET_NULL, null=True, default=None, related_name="notifcation_sender")
+    receiver_id = models.ForeignKey(Regular, on_delete=models.CASCADE, related_name="notifcation_receiver")
     content = models.TextField(null=False)
     created_at = models.DateTimeField(auto_now_add=True)

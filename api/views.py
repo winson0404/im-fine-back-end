@@ -2,12 +2,15 @@ from rest_framework import viewsets, status, views
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import User, Admin, Regular, AdminLog, Message, Post, History, FriendList, Announcement
+from .models import User, Admin, Regular, AdminLog, Message, Post, History, FriendList, Announcement, Notification
 from .serializers import UserSerializer, AdminSerializer, RegularSerializer, AdminLogSerializer, HistorySerializer, \
-    PostSerializer, MessageSerializer, FriendListSerializer, AnnouncementSerializer
+    PostSerializer, MessageSerializer, FriendListSerializer, AnnouncementSerializer, NotificationSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_auth.registration.views import RegisterView
+from django.core.exceptions import ObjectDoesNotExist
+
+import uuid
 
 
 # Create your views here.
@@ -161,3 +164,42 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
 
         response = {'message': 'announcement successfully created'}
         return Response(response, status=status.HTTP_200_OK)
+
+
+class NotificationViewSet(viewsets.ModelViewSet):
+    queryset = Notification.objects.all()
+    serializer_class = NotificationSerializer
+    authentication_classes = (TokenAuthentication,)
+
+    def create(self, request, *args, **kwargs):
+        response = {'message': "Please use the provided api/notifications/create_notification [POST] method"}
+        return Response(response, status=status.HTTP_403_FORBIDDEN)
+
+    @action(detail=False, methods=['POST'])
+    def create_notification(self, request):
+        user = request.user
+        try:
+            friends = FriendList.objects.all().filter(user_id=user.id)
+
+            for friend in friends:
+                Notification.objects.create(receiver_id=friend.friend_id, sender_id=friend.user_id, content=request.data["content"])
+
+        except ObjectDoesNotExist:
+            response = {'message': 'this user doesnt have friend'}
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        # admin = Admin.objects.get(id=user)
+        # Announcement.objects.create(sender_id=admin, content=request.data["content"])
+
+        response = {'message': 'notification successfully created'}
+        return Response(response, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['GET'])
+    def get_notification(self, request):
+        user = request.user
+        notifications = Notification.objects.all().filter(receiver_id=user.id).order_by('-created_at')
+        serializer = NotificationSerializer(notifications, many=True)
+        return Response(serializer.data)
+
+    def list(self, request, *args, **kwargs):
+        response = {'message': "Please use the provided api/notifications/get_notifications [GET] method"}
+        return Response(response, status=status.HTTP_403_FORBIDDEN)
