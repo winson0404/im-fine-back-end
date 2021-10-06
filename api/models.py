@@ -35,7 +35,7 @@ class Regular(models.Model):
 
 class FriendList(models.Model):
     user_id = models.ForeignKey(Regular, on_delete=models.CASCADE, related_name="friend_list")
-    friend_id = models.ForeignKey(Regular, on_delete=models.SET_NULL, null=True)
+    friend_id = models.ForeignKey(Regular, on_delete=models.SET_NULL, null=True, default=None)
     friend_email = models.EmailField(default="", blank=True, null=True)
     friend_username = models.CharField(max_length=50, default="", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -79,22 +79,7 @@ class Message(models.Model):
     )
 
 
-# class TempHistory(models.Model):
-#     content = models.TextField(null=False)
-#     histType = models.CharField(
-#         max_length=10,
-#         choices=TEMP_HISTORY_TYPES,
-#         null=False
-#     )
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     platform = models.CharField(
-#         max_length=10,
-#         choices=SOCIAL_PLATFORMS,
-#         null=False
-#     )
-#     receiver = models.CharField(max_length=50, null=False)
-#     messageType = models.CharField(
-#         max_length=10,
-#         choices=MESSAGE_TYPES,
-#         null=False
-#     )
+class Announcement(models.Model):
+    sender_id = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True, default=None)
+    content = models.TextField(null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
