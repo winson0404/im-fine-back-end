@@ -7,7 +7,7 @@
 4. now u can just run the backend server by clicking run button
 
 ## Getting the dependencies
-Simply run `pip install requirements.txt` to install all required dependencies.
+Simply run `pip install -r requirements.txt` to install all required dependencies.
 
 ## Running the server
 Run `python manage.py runserver`.
