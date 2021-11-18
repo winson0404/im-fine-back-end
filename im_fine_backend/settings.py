@@ -28,7 +28,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG')
 
-ALLOWED_HOSTS = ['im-fine-backend.herokuapp.com']
+ALLOWED_HOSTS = ['im-fine-backend.herokuapp.com', '127.0.0.1']
 
 # Application definition
 
@@ -143,7 +143,7 @@ WSGI_APPLICATION = 'im_fine_backend.wsgi.application'
 default_dburl = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
 
 DATABASES = {
-    'default': config('DATABSE_URL', default=default_dburl, cast=dburl),
+    'default': config('DATABASE_URL', default=default_dburl, cast=dburl),
 }
 
 # Password validation
