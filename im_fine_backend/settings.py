@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # additionals,
-    'django_seed',
     'rest_framework_swagger',
     'drf_yasg',
     'rest_framework',
