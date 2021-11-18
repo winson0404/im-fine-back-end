@@ -49,9 +49,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'rest_auth.registration',
-    'corsheaders',
+    # 'corsheaders',
     'api',
-    'python-decouple'
 ]
 ########## ADDITIONAL STUFF ########################
 
@@ -114,7 +113,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # additionals
-    'corsheaders.middleware.CorsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'im_fine_backend.urls'
