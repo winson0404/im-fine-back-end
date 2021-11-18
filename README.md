@@ -10,7 +10,9 @@
 Simply run `pip install -r requirements.txt` to install all required dependencies.
 
 ## Running the server
-Run `python manage.py runserver`.
+1. Run `python manage.py makemigrations`.
+2. Run `python manage.py migrate`.
+3. Run `python manage.py runserver`.
 
 ## Opening schema
 After running the server, navigate `http://127.0.0.1:8000/`
