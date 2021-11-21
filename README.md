@@ -1,5 +1,6 @@
 # im-fine-back-end
-
+This backend is to serve the `i_am_fine_front_end`.  It has also been deployed to https://im-fine-backend.herokuapp.com/, which will be turned down after sembreak ends to prevent exploit as its a public endpoints.<br/><br/>
+Follow below instructions to run the server in your local machine.
 ## Getting the dependencies
 Simply run `pip install -r requirements.txt` to install all required dependencies.
 
