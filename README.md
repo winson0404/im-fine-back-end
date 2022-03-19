@@ -18,6 +18,6 @@ Simply run `pip install -r requirements.txt` to install all required dependencie
 ## Opening schema
 After running the server, navigate `http://127.0.0.1:8000/`
 
-## video of working schema, need to provide proper password to get sign up and get token
+## Video of working schema, need to provide proper password to get sign up and get token
 https://user-images.githubusercontent.com/53987303/159136329-252cf231-7d6c-4e0f-8fa3-c15099121a72.mp4
 
